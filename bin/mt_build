@@ -1,0 +1,102 @@
+#!/bin/bash
+
+# @author: Alexander Chibrikin aka alek13 <alek13.me@gmail.com>
+# @license: MIT
+
+
+script_dir=$(realpath $(dirname $0))
+script_name=$(basename $0)
+
+. $script_dir/colors
+
+config_file=$script_name
+config_folder=${XDG_CONFIG_HOME:-"$HOME/.config"}
+
+# ------ Config ------
+remote=origin
+buildOptions='-DRUN_IN_PLACE=TRUE -DBUILD_SERVER=TRUE -DBUILD_CLIENT=FALSE' # see https://github.com/minetest/minetest#cmake-options
+# ------ /Config ------
+
+function info.about() {
+    echo
+    echo "${green}mt_build$reset - builds MineTest of specified version | сборка MineTest указанной версии"
+    echo
+}
+function info.usage() {
+    echo "${yellow}Usage$reset:"
+    echo "    mt_build { ${green}<${reset}version${green}>${reset} | --help }"
+    echo
+    echo "${yellow}Arguments$reset:"
+    echo "    ${green}version$reset     MT version to switch to & build | Версия MT, на которую переключиться и сбилдить"
+    echo
+}
+info.configure() {
+    echo "${underline}${yellow}Configure$reset:"
+    echo "    You can place $yellow\`$config_file\`$reset file into your $yellow\`$config_folder/\`$reset folder to overwrite config variables"
+    echo "    ${yellow}variables$reset:"
+    echo "        ${green}remote$reset           Name of git remote of MineTest repo you cloned. [Default: ${yellow}'$remote'$reset]"
+    echo "        ${green}buildOptions$reset     String with build options (see https://github.com/minetest/minetest#cmake-options). [Default: ${yellow}'$buildOptions'$reset]"
+    echo
+}
+function info.error() {
+    echo
+    echo "${underline}${lightred}${bold}Error$reset${lightred}: $@$reset"
+    echo
+}
+function info.full() {
+    info.about;
+    info.usage;
+    info.configure
+}
+
+if [[ $# == 0 || $1 == '--help' ]]; then
+    info.full;
+    exit 1;
+fi
+
+# =========================== Helpers ===========================
+function getRepoUrl() {
+    git config --get remote.${remote}.url |
+        sed 's|^git@github.com:|https://github.com/|' |
+        sed 's|\.git||';
+}
+# ===============================================================
+
+
+
+# Read args & options:
+version=$1;shift
+
+echo "$config_folder/$config_file"
+# Get config overwrites
+if [[ -f "$config_folder/$config_file" ]]; then
+    . "$config_folder/$config_file"
+fi
+
+# Check if this is Git repo & its a MT repo
+repoUrl=`getRepoUrl`
+if [[ $repoUrl == '' ]]; then
+    info.error "You should \`cd\` into folder with MT sources"
+fi
+if [[ $repoUrl != 'https://github.com/minetest/minetest' ]]; then
+    info.error "This repo ($repoUrl) is not a MineTest repo"
+fi
+
+c.header 'Build MineTest'
+echo "${green}In folder$reset: ${yellow}'$(pwd)'$reset"
+echo "${green}Version$reset: ${yellow}'$version'$reset"
+echo "${green}Options$reset: ${yellow}'$buildOptions'$reset"
+echo
+echo "see required dependencies at ${green}https://github.com/minetest/minetest/tree/$version#dependencies$reset"
+echo
+c.askContinue 'Continue with build ?'
+
+git fetch -p && \
+git checkout $version && \
+\
+#rm -rf ./build && echo $? && \
+#mkdir ./build &&  echo $? && \
+#cd ./build &&  echo $? && pwd && \
+\
+cmake . $options && \
+make -j$(nproc)
