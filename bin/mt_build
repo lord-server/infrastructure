@@ -3,6 +3,7 @@
 # @author: Alexander Chibrikin aka alek13 <alek13.me@gmail.com>
 # @license: MIT
 
+set -e
 
 script_dir=$(realpath $(dirname $0))
 script_name=$(basename $0)
@@ -94,9 +95,9 @@ c.askContinue 'Continue with build ?'
 git fetch -p && \
 git checkout $version && \
 \
-#rm -rf ./build && echo $? && \
-#mkdir ./build &&  echo $? && \
-#cd ./build &&  echo $? && pwd && \
+rm -rf ./build && \
+mkdir ./build  && \
+cd ./build && pwd && \
 \
-cmake . $options && \
+cmake .. $buildOptions && \
 make -j$(nproc)
