@@ -61,6 +61,9 @@ function getRepoUrl() {
         sed 's|^git@github.com:|https://github.com/|' |
         sed 's|\.git||';
 }
+function getRepoLastTag() {
+    git describe --abbrev=0 --tags "$(git rev-list --tags --max-count=1)"
+}
 # ===============================================================
 
 
@@ -92,12 +95,20 @@ echo "see required dependencies at ${green}https://github.com/minetest/minetest/
 echo
 c.askContinue 'Continue with build ?'
 
-git fetch -p && \
-git checkout $version && \
-\
-rm -rf ./build && \
-mkdir ./build  && \
-cd ./build && pwd && \
-\
-cmake .. $buildOptions && \
+# cleanup
+rm -rf ./build
+mkdir ./build
+rm -rf lib/irrlichtmt
+
+git fetch -p
+git checkout $version
+
+git clone https://github.com/minetest/irrlicht.git lib/irrlichtmt
+cd lib/irrlichtmt
+git checkout $(getRepoLastTag)
+cd ../../
+
+cd ./build
+
+cmake .. $buildOptions
 make -j$(nproc)
