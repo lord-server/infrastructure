@@ -15,7 +15,7 @@ config_folder=${XDG_CONFIG_HOME:-"$HOME/.config"}
 
 # ------ Config ------
 remote=origin
-buildOptions='-DRUN_IN_PLACE=TRUE -DBUILD_SERVER=TRUE -DBUILD_CLIENT=FALSE' # see https://github.com/minetest/minetest#cmake-options
+buildOptions='-DRUN_IN_PLACE=TRUE -DBUILD_SERVER=TRUE -DBUILD_CLIENT=FALSE -DBUILD_UNITTESTS=FALSE' # see https://github.com/minetest/minetest#cmake-options
 # ------ /Config ------
 
 function info.about() {
@@ -28,7 +28,7 @@ function info.usage() {
     echo "    mt_build { ${green}<${reset}version${green}>${reset} | --help }"
     echo
     echo "${yellow}Arguments$reset:"
-    echo "    ${green}version$reset     MT version to switch to & build | Версия MT, на которую переключиться и сбилдить"
+    echo "    ${green}version$reset     MT version to switch to & build | Версия MT, на которую переключиться и сбилдить (ex: '5.6.1', '5.7.0')"
     echo
 }
 info.configure() {
@@ -71,9 +71,10 @@ function getRepoLastTag() {
 # Read args & options:
 version=$1;shift
 
-echo "$config_folder/$config_file"
 # Get config overwrites
 if [[ -f "$config_folder/$config_file" ]]; then
+    echo "${green}using:$reset ${yellow}$config_folder/$config_file$reset"
+    echo
     . "$config_folder/$config_file"
 fi
 
@@ -86,14 +87,22 @@ if [[ $repoUrl != 'https://github.com/minetest/minetest' ]]; then
     info.error "This repo ($repoUrl) is not a MineTest repo"
 fi
 
+
+defaultIrrLichtVersion=$(getRepoLastTag)
+
+echo "${lightyellow}WARNING!$reset"
+echo " - see & ${bold}install$reset required dependencies at ${green}https://github.com/minetest/minetest/tree/$version#dependencies$reset"
+echo " - find out which ${bold}version of IrrLicht$reset you need. Usually here: ${green}https://github.com/minetest/minetest/releases/tag/$version$reset"
+echo
+irrLichtVersion=$(c.askEnter "Enter needed IrrLicht version")
+
 c.header 'Build MineTest'
 echo "${green}In folder$reset: ${yellow}'$(pwd)'$reset"
-echo "${green}Version$reset: ${yellow}'$version'$reset"
+echo "${green}MT Version$reset: ${yellow}'$version'$reset"
 echo "${green}Options$reset: ${yellow}'$buildOptions'$reset"
+echo "${green}IrrLicht version$reset: ${yellow}'$irrLichtVersion'$reset"
 echo
-echo "see required dependencies at ${green}https://github.com/minetest/minetest/tree/$version#dependencies$reset"
-echo
-c.askContinue 'Continue with build ?'
+c.askContinue 'Continue with build'
 
 # cleanup
 rm -rf ./build
@@ -105,7 +114,7 @@ git checkout $version
 
 git clone https://github.com/minetest/irrlicht.git lib/irrlichtmt
 cd lib/irrlichtmt
-git checkout $(getRepoLastTag)
+git checkout "$irrLichtVersion"
 cd ../../
 
 cd ./build
