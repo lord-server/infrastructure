@@ -92,6 +92,7 @@ defaultIrrLichtVersion=$(getRepoLastTag)
 
 echo "${lightyellow}WARNING!$reset"
 echo " - see & ${bold}install$reset required dependencies at ${green}https://github.com/minetest/minetest/tree/$version#dependencies$reset"
+echo "                                                    or ${green}https://github.com/minetest/minetest/blob/$version/doc/compiling/linux.md#dependencies$reset"
 echo " - find out which ${bold}version of IrrLicht$reset you need. Usually here: ${green}https://github.com/minetest/minetest/releases/tag/$version$reset"
 echo
 irrLichtVersion=$(c.askEnter "Enter needed IrrLicht version")
