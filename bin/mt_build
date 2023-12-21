@@ -36,7 +36,7 @@ info.configure() {
     echo "    You can place $yellow\`$config_file\`$reset file into your $yellow\`$config_folder/\`$reset folder to overwrite config variables"
     echo "    ${yellow}variables$reset:"
     echo "        ${green}remote$reset           Name of git remote of MineTest repo you cloned. [Default: ${yellow}'$remote'$reset]"
-    echo "        ${green}buildOptions$reset     String with build options (see https://github.com/minetest/minetest#cmake-options). [Default: ${yellow}'$buildOptions'$reset]"
+    echo "        ${green}buildOptions$reset     String with build options (see https://github.com/minetest/minetest/blob/master/doc/compiling/README.md#cmake-options). [Default: ${yellow}'$buildOptions'$reset]"
     echo
 }
 function info.error() {
@@ -92,7 +92,7 @@ defaultIrrLichtVersion=$(getRepoLastTag)
 
 echo "${lightyellow}WARNING!$reset"
 echo " - see & ${bold}install$reset required dependencies at ${green}https://github.com/minetest/minetest/tree/$version#dependencies$reset"
-echo "                                                    or ${green}https://github.com/minetest/minetest/blob/$version/doc/compiling/linux.md#dependencies$reset"
+echo "                                       or ${green}https://github.com/minetest/minetest/blob/$version/doc/compiling/linux.md#dependencies$reset"
 echo " - find out which ${bold}version of IrrLicht$reset you need. Usually here: ${green}https://github.com/minetest/minetest/releases/tag/$version$reset"
 echo
 irrLichtVersion=$(c.askEnter "Enter needed IrrLicht version")
