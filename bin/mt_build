@@ -88,35 +88,35 @@ if [[ $repoUrl != 'https://github.com/minetest/minetest' ]]; then
 fi
 
 
-defaultIrrLichtVersion=$(getRepoLastTag)
+#defaultIrrLichtVersion=$(getRepoLastTag)
 
 echo "${lightyellow}WARNING!$reset"
 echo " - see & ${bold}install$reset required dependencies at ${green}https://github.com/minetest/minetest/tree/$version#dependencies$reset"
 echo "                                       or ${green}https://github.com/minetest/minetest/blob/$version/doc/compiling/linux.md#dependencies$reset"
-echo " - find out which ${bold}version of IrrLicht$reset you need. Usually here: ${green}https://github.com/minetest/minetest/releases/tag/$version$reset"
-echo
-irrLichtVersion=$(c.askEnter "Enter needed IrrLicht version")
+#echo " - find out which ${bold}version of IrrLicht$reset you need. Usually here: ${green}https://github.com/minetest/minetest/releases/tag/$version$reset"
+#echo
+#irrLichtVersion=$(c.askEnter "Enter needed IrrLicht version")
 
 c.header 'Build MineTest'
 echo "${green}In folder$reset: ${yellow}'$(pwd)'$reset"
 echo "${green}MT Version$reset: ${yellow}'$version'$reset"
 echo "${green}Options$reset: ${yellow}'$buildOptions'$reset"
-echo "${green}IrrLicht version$reset: ${yellow}'$irrLichtVersion'$reset"
+#echo "${green}IrrLicht version$reset: ${yellow}'$irrLichtVersion'$reset"
 echo
 c.askContinue 'Continue with build'
 
 # cleanup
 rm -rf ./build
 mkdir ./build
-rm -rf lib/irrlichtmt
+#rm -rf lib/irrlichtmt
 
 git fetch -p
 git checkout $version
 
-git clone https://github.com/minetest/irrlicht.git lib/irrlichtmt
-cd lib/irrlichtmt
-git checkout "$irrLichtVersion"
-cd ../../
+#git clone https://github.com/minetest/irrlicht.git lib/irrlichtmt
+#cd lib/irrlichtmt
+#git checkout "$irrLichtVersion"
+#cd ../../
 
 cd ./build
 
